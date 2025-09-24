@@ -3,244 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Downloader de Músicas</title>
+    <title>KUROMI - Future Music</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4CAF50;
-            --primary-dark: #45a049;
-            --bg-color: #f4f7f6;
-            --card-color: #ffffff;
-            --text-color: #333;
-            --border-color: #ddd;
+            --kuromi-dark: #2A0845;
+            --kuromi-purple: #4B2773;
+            --kuromi-pink: #D216B2;
+            --kuromi-white: #F0F0F0;
+            --kuromi-black: #1A0529;
+            --kuromi-neon: #E035EE;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--kuromi-black), var(--kuromi-dark));
+            color: var(--kuromi-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
             padding: 20px;
+            overflow: auto;
         }
 
         .container {
+            width: 90%;
             max-width: 800px;
-            margin: 0 auto;
-            background-color: var(--card-color);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: rgba(42, 8, 69, 0.4);
+            border: 2px solid var(--kuromi-purple);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-image: linear-gradient(45deg, var(--kuromi-pink), var(--kuromi-purple)) 1;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
+        .container::before, .container::after {
+            content: '';
+            position: absolute;
+            background: radial-gradient(circle, var(--kuromi-neon) 0%, transparent 60%);
+            opacity: 0.2;
+            z-index: -1;
+            animation: glow 10s infinite alternate;
+        }
+
+        .container::before {
+            top: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .container::after {
+            bottom: -50px;
+            right: -50px;
+            width: 120px;
+            height: 120px;
+            animation: glow 12s infinite alternate-reverse;
+        }
+
+        @keyframes glow {
+            0% { transform: scale(1); opacity: 0.2; }
+            100% { transform: scale(1.2); opacity: 0.4; }
         }
 
         h1 {
-            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
             font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            color: var(--kuromi-pink);
+            text-shadow: 0 0 15px var(--kuromi-pink), 0 0 20px var(--kuromi-neon);
         }
         
-        .search-box {
+        h1 i {
+            font-size: 1em;
+            vertical-align: middle;
+            margin-right: 10px;
+            animation: spin 3s infinite linear;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        #search-container {
             display: flex;
-            gap: 10px;
-            margin-bottom: 1.5rem;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
         }
 
-        .search-box input {
-            flex-grow: 1;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
+        #search-input {
+            width: 100%;
+            padding: 15px 60px 15px 20px;
+            border: 2px solid var(--kuromi-purple);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--kuromi-white);
             font-size: 1rem;
-            transition: border-color 0.3s;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
         }
 
-        .search-box input:focus {
+        #search-input::placeholder {
+            color: #ccc;
+        }
+
+        #search-input:focus {
             outline: none;
-            border-color: var(--primary-color);
+            border-color: var(--kuromi-pink);
+            box-shadow: 0 0 15px var(--kuromi-pink);
         }
 
-        .search-box button {
-            padding: 12px 20px;
+        #search-button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 50px;
+            width: 50px;
             border: none;
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 5px;
+            background: var(--kuromi-pink);
+            color: var(--kuromi-white);
+            font-size: 1.2rem;
             cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .search-box button:hover {
-            background-color: var(--primary-dark);
+        #search-button:hover {
+            background: #B40098;
+            transform: translateY(-50%) scale(1.1);
         }
 
-        .message {
-            text-align: center;
-            margin-top: 1rem;
-            font-weight: 600;
+        #results-container {
+            background: rgba(42, 8, 69, 0.6);
+            border: 1px solid var(--kuromi-purple);
+            border-radius: 15px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
         }
-
-        .results-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        
+        #results-container h2 {
+            font-size: 1.5rem;
+            color: var(--kuromi-neon);
+            margin-top: 0;
+            text-align: left;
+            border-bottom: 2px solid var(--kuromi-pink);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .result-item {
             display: flex;
             align-items: center;
-            gap: 15px;
             padding: 15px;
             margin-bottom: 10px;
-            background-color: var(--bg-color);
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            background: rgba(75, 39, 115, 0.5);
+            border-radius: 10px;
+            transition: all 0.3s ease;
         }
         
         .result-item:hover {
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background: var(--kuromi-purple);
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
         }
 
         .result-item img {
             width: 60px;
             height: 60px;
-            border-radius: 5px;
-            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+            border: 1px solid var(--kuromi-pink);
+            box-shadow: 0 0 10px rgba(210, 22, 178, 0.5);
         }
 
-        .info {
+        .result-info {
             flex-grow: 1;
+            text-align: left;
         }
 
-        .info h3 {
-            margin: 0;
+        .result-info h3 {
+            margin: 0 0 5px;
             font-size: 1.1rem;
-            font-weight: 600;
+            color: var(--kuromi-white);
         }
 
-        .info p {
+        .result-info p {
             margin: 0;
-            color: #777;
             font-size: 0.9rem;
+            color: var(--kuromi-white);
         }
-
-        .download-btn {
-            background-color: var(--primary-color);
-            color: white;
+        
+        .download-button {
+            background: var(--kuromi-pink);
+            color: var(--kuromi-white);
             border: none;
             padding: 10px 15px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: background-color 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            margin-left: 10px;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
 
-        .download-btn:hover {
-            background-color: var(--primary-dark);
+        .download-button:hover {
+            background: #B40098;
+            transform: translateY(-2px);
+        }
+        
+        #loading-message, #error-message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--kuromi-dark);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--kuromi-pink);
+            border-radius: 10px;
+            border: 3px solid var(--kuromi-dark);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header>
-            <h1><i class="fas fa-headphones-alt"></i> Baixar Músicas</h1>
-            <p>Pesquise e baixe suas músicas favoritas do YouTube!</p>
-        </header>
-
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Digite o nome da música ou artista...">
-            <button id="searchButton"><i class="fas fa-search"></i> Pesquisar</button>
+        <h1><i class="fas fa-compact-disc"></i> KUROMI Future Music</h1>
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Pesquisar músicas, artistas...">
+            <button id="search-button"><i class="fas fa-search"></i></button>
         </div>
-
-        <p id="message" class="message"></p>
         
-        <div id="resultsContainer" class="results-list">
+        <div id="loading-message" class="hidden">Carregando...</div>
+        <div id="error-message" class="hidden"></div>
+
+        <div id="results-container">
             </div>
     </div>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const resultsContainer = document.getElementById('resultsContainer');
-        const messageDisplay = document.getElementById('message');
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const resultsContainer = document.getElementById('results-container');
+            const loadingMessage = document.getElementById('loading-message');
+            const errorMessage = document.getElementById('error-message');
 
-        const API_SEARCH_URL = 'https://api.nexfuture.com.br/api/pesquisas/youtube?query=';
-        const API_DOWNLOAD_URL = 'https://api.nexfuture.com.br/api/downloads/youtube/play_audio?query=';
+            const API_SEARCH_URL = 'https://api.nexfuture.com.br/api/pesquisas/youtube?query=';
+            const API_DOWNLOAD_URL = 'https://api.nexfuture.com.br/api/downloads/youtube/play_audio?query=';
+            
+            const showMessage = (element, message, isError = false) => {
+                element.textContent = message;
+                element.style.color = isError ? '#FF6B6B' : 'var(--kuromi-white)';
+                element.classList.remove('hidden');
+            };
 
-        const showMessage = (message, isError = false) => {
-            messageDisplay.textContent = message;
-            messageDisplay.style.color = isError ? '#FF5555' : '#555';
-        };
-
-        const performSearch = async () => {
-            const query = searchInput.value.trim();
-            if (!query) {
-                showMessage("Por favor, digite algo para pesquisar.");
-                return;
-            }
-
-            resultsContainer.innerHTML = '';
-            showMessage("Pesquisando... Aguarde...");
-
-            try {
-                const response = await fetch(`${API_SEARCH_URL}${encodeURIComponent(query)}`);
-                const data = await response.json();
-
-                if (data.status === 'ok' && data.data && data.data.length > 0) {
-                    messageDisplay.textContent = '';
-                    data.data.forEach(item => {
-                        const resultItem = document.createElement('li');
-                        resultItem.classList.add('result-item');
-                        
-                        resultItem.innerHTML = `
-                            <img src="${item.thumb}" alt="Capa da música">
-                            <div class="info">
-                                <h3>${item.title}</h3>
-                                <p>${item.uploader}</p>
-                            </div>
-                            <button class="download-btn" data-url="${item.url}">
-                                <i class="fas fa-download"></i> Baixar
-                            </button>
-                        `;
-                        resultsContainer.appendChild(resultItem);
-                    });
-                } else {
-                    showMessage("Nenhum resultado encontrado.");
+            const performSearch = async () => {
+                const query = searchInput.value.trim();
+                if (!query) {
+                    return;
                 }
-            } catch (error) {
-                console.error("Erro na pesquisa:", error);
-                showMessage("Ocorreu um erro ao pesquisar. Tente novamente mais tarde.", true);
-            }
-        };
 
-        const handleDownload = (event) => {
-            const button = event.target.closest('.download-btn');
-            if (!button) return;
+                resultsContainer.innerHTML = '';
+                errorMessage.classList.add('hidden');
+                showMessage(loadingMessage, 'Procurando... Aguarde...');
 
-            const url = button.getAttribute('data-url');
-            window.open(`${API_DOWNLOAD_URL}${encodeURIComponent(url)}`, '_blank');
-        };
+                try {
+                    const response = await fetch(`${API_SEARCH_URL}${encodeURIComponent(query)}`);
+                    const data = await response.json();
 
-        searchButton.addEventListener('click', performSearch);
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
+                    if (data.status === 'ok' && data.data && data.data.length > 0) {
+                        loadingMessage.classList.add('hidden');
+                        resultsContainer.innerHTML = '<h2>Resultados</h2>';
+                        data.data.forEach(item => {
+                            const resultItem = document.createElement('div');
+                            resultItem.classList.add('result-item');
+                            
+                            resultItem.innerHTML = `
+                                <img src="${item.thumb}" alt="Capa da música">
+                                <div class="result-info">
+                                    <h3>${item.title}</h3>
+                                    <p>${item.uploader}</p>
+                                </div>
+                                <a href="${API_DOWNLOAD_URL}${encodeURIComponent(item.url)}" class="download-button" target="_blank">
+                                    <i class="fas fa-download"></i> Baixar
+                                </a>
+                            `;
+                            resultsContainer.appendChild(resultItem);
+                        });
+                    } else {
+                        showMessage(loadingMessage, 'Nenhum resultado encontrado.');
+                    }
+                } catch (error) {
+                    console.error('Erro ao pesquisar:', error);
+                    showMessage(errorMessage, 'Ocorreu um erro na pesquisa. Verifique a conexão.', true);
+                    loadingMessage.classList.add('hidden');
+                }
+            };
+
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
         });
-        resultsContainer.addEventListener('click', handleDownload);
     </script>
-
 </body>
     </html>
