@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('A API não respondeu corretamente. Código: ' + response.status);
             }
             const data = await response.json();
-            displayResults(data.results); // O formato da resposta (ex: data.results) depende da API
+            displayResults(data.resultado); // O formato da resposta (ex: data.results) depende da API
         } catch (error) {
             console.error('Erro ao buscar:', error);
             showError('Não foi possível buscar os resultados. A API pode estar offline.');
