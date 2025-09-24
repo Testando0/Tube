@@ -3,286 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuromi Music & Video Downloader</title>
+    <title>Kuromi Downloads 😈</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --background-color: #1a1a1d;
-            --container-color: #2c2c2f;
-            --accent-color: #ff007f; /* Rosa-choque da Kuromi */
-            --text-color: #f0f0f0;
-            --border-color: #444;
-            --error-color: #ff3b3b;
-            --success-color: #4caf50;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .downloader-container {
-            background-color: var(--container-color);
-            padding: 40px;
-            border-radius: 20px;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-color);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .kuromi-header img {
-            width: 120px;
-            height: auto;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 10px var(--accent-color));
-        }
-
-        .kuromi-header h1 {
-            color: var(--accent-color);
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-            text-shadow: 0 0 5px var(--accent-color);
-        }
-
-        .kuromi-header p {
-            font-size: 1rem;
-            color: #aaa;
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .url-input, .format-select {
-            width: 100%;
-            padding: 15px;
-            font-size: 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-
-        .url-input:focus, .format-select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
-        }
-
-        .format-select {
-            cursor: pointer;
-        }
-        
-        .download-btn {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .download-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 0, 127, 0.6);
-        }
-        
-        .download-btn:disabled {
-            background-color: #555;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        
-        .loader {
-            width: 20px;
-            height: 20px;
-            border: 3px solid #000;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-        }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .status-area {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            min-height: 25px;
-        }
-
-        #status-message.error { color: var(--error-color); font-weight: bold; }
-        #status-message.success { color: var(--success-color); font-weight: bold; }
-        
-        #download-link a {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 12px 25px;
-            background-color: var(--success-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        #download-link a:hover {
-            background-color: #59c05c;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="container">
+        <img src="https://i.imgur.com/uG9T6lG.png" alt="Kuromi" class="kuromi-icon">
+        <h1>Kuromi Downloads</h1>
+        <p class="subtitle">Baixe músicas e vídeos com um toque de rebeldia!</p>
 
-    <div class="downloader-container">
-        <div class="kuromi-header">
-            <img src="https://i.pinimg.com/originals/99/3a/03/993a033a6e1935561a258f5370c7e2b1.png" alt="Kuromi">
-            <h1>Kuromi Downloader</h1>
-            <p>Baixe suas músicas e vídeos favoritos!</p>
+        <div class="tabs">
+            <button id="tab-name" class="active">Buscar por Nome</button>
+            <button id="tab-link">Baixar por Link</button>
         </div>
 
-        <form id="download-form">
-            <div class="input-group">
-                <input type="url" id="urlInput" class="url-input" placeholder="☠️ Cole o link do vídeo aqui..." required>
-            </div>
-            <div class="input-group">
-                <select id="formatSelect" class="format-select">
-                    <option value="mp3">MP3 (Áudio)</option>
-                    <option value="mp4">MP4 (Vídeo)</option>
-                </select>
-            </div>
-            <button type="submit" id="downloadBtn" class="download-btn">
-                <span>Baixar</span>
-            </button>
-        </form>
-
-        <div class="status-area">
-            <p id="status-message"></p>
-            <div id="download-link"></div>
+        <div id="form-name" class="form-content active">
+            <input type="text" id="search-name-input" placeholder="Digite o nome da música ou vídeo...">
+            <button id="search-name-btn">Buscar!</button>
         </div>
+
+        <div id="form-link" class="form-content">
+            <input type="url" id="search-link-input" placeholder="Cole o link do vídeo aqui...">
+            <button id="search-link-btn">Baixar!</button>
+        </div>
+
+        <div id="results">
+            </div>
+
+        <footer>
+            Feito com malícia por Kuromi 😈
+        </footer>
     </div>
 
-    <script>
-        const downloadForm = document.getElementById('download-form');
-        const urlInput = document.getElementById('urlInput');
-        const formatSelect = document.getElementById('formatSelect');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const statusMessage = document.getElementById('status-message');
-        const downloadLinkContainer = document.getElementById('download-link');
-        
-        // API Endpoint público do Cobalt
-        const API_ENDPOINT = "https://co.wuk.sh/api/json";
-
-        downloadForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const url = urlInput.value.trim();
-            const format = formatSelect.value;
-
-            if (!url) {
-                showStatus('Por favor, insira um link válido!', 'error');
-                return;
-            }
-
-            toggleLoading(true);
-            showStatus('Conectando com a API...', 'info');
-            downloadLinkContainer.innerHTML = '';
-
-            try {
-                // Monta o corpo da requisição para a API Cobalt
-                const requestBody = {
-                    url: url,
-                    aFormat: "mp3", // Formato de áudio padrão
-                    isAudioOnly: format === 'mp3',
-                    vQuality: "720" // Qualidade de vídeo padrão
-                };
-
-                const response = await fetch(API_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                const data = await response.json();
-
-                if (data.status === 'error') {
-                    throw new Error(data.text || 'Erro desconhecido da API.');
-                } else if (data.status === 'stream') {
-                    showStatus('Seu download está pronto!', 'success');
-                    createDownloadLink(data.url, format);
-                } else {
-                     showStatus('Processando, aguarde...', 'info');
-                    // O status pode ser 'redirect', então apenas abrimos o link.
-                    window.open(data.url, '_blank');
-                }
-
-            } catch (error) {
-                console.error('Erro na requisição:', error);
-                showStatus(`Erro: ${error.message}`, 'error');
-            } finally {
-                toggleLoading(false);
-            }
-        });
-
-        function showStatus(message, type = 'info') {
-            statusMessage.textContent = message;
-            statusMessage.className = type;
-        }
-
-        function toggleLoading(isLoading) {
-            if (isLoading) {
-                downloadBtn.disabled = true;
-                downloadBtn.innerHTML = '<div class="loader"></div> <span>Processando...</span>';
-            } else {
-                downloadBtn.disabled = false;
-                downloadBtn.innerHTML = '<span>Baixar</span>';
-            }
-        }
-
-        function createDownloadLink(downloadUrl, format) {
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.textContent = `Clique aqui para baixar o ${format.toUpperCase()}`;
-            a.target = '_blank'; // Abre o link de download em uma nova aba
-            downloadLinkContainer.innerHTML = ''; // Limpa links antigos
-            downloadLinkContainer.appendChild(a);
-        }
-    </script>
-
+    <script src="script.js"></script>
 </body>
-                              </html>
+</html>
