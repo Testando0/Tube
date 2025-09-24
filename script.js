@@ -1,4 +1,4 @@
-// --- APIs FUNCIONAIS (ATÉ A DATA ATUAL) ---
+// --- APIs FUNCIONAIS (Válido em Setembro de 2025) ---
 // AVISO: Estas APIs são públicas e podem deixar de funcionar a qualquer momento.
 const API_SEARCH_URL = 'https://invidious.io.lol/api/v1/search'; // API para buscar vídeos por nome
 const API_DOWNLOAD_URL = 'https://co.wuk.sh/api/json';         // API para obter links de download a partir de uma URL
@@ -36,14 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const showError = (message, element = resultsDiv) => {
-        element.innerHTML = `<p style="color: #ff4d4d; text-align: center;">${message}</p>`;
+        element.innerHTML = `<p style="color: #ff8fab; text-align: center;">${message}</p>`;
     };
 
     // --- FUNÇÃO 1: BUSCAR VÍDEOS POR NOME ---
     const searchByName = async () => {
         const query = searchNameInput.value.trim();
         if (!query) {
-            showError('Por favor, digite o nome de uma música ou vídeo.');
+            showError('Por favor, digite algo para buscar.');
             return;
         }
         showLoader();
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         items.slice(0, 10).forEach(item => { // Mostra os 10 primeiros resultados
             const resultHtml = `
                 <div class="result-item" id="item-${item.videoId}">
-                    <img src="${item.videoThumbnails[0]?.url || 'https://i.imgur.com/uG9T6lG.png'}" alt="Thumbnail">
+                    <img src="${item.videoThumbnails.find(t=>t.quality==="medium")?.url || 'https://i.imgur.com/uG9T6lG.png'}" alt="Thumbnail">
                     <div class="info">
                         <p>${item.title}</p>
                         <span>${item.author}</span>
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(API_DOWNLOAD_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ url: videoUrl, isAudioOnly: true })
+                body: JSON.stringify({ url: videoUrl })
             });
             if (!response.ok) throw new Error('A API de download não respondeu.');
             
@@ -105,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const downloadButtons = `
                 <div class="download-links">
-                    <a href="${data.url}" target="_blank" download><button>MP3</button></a>
-                    ${data.picker ? `<a href="${data.picker[0].url}" target="_blank" download><button>MP4</button></a>` : ''}
+                    <a href="${data.url}" target="_blank" download><button>Áudio</button></a>
+                    ${data.picker ? `<a href="${data.picker[0].url}" target="_blank" download><button>Vídeo</button></a>` : ''}
                 </div>
             `;
             actionsDiv.innerHTML = downloadButtons;
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(API_DOWNLOAD_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ url: link, isAudioOnly: true })
+                body: JSON.stringify({ url: link })
             });
 
             if (!response.ok) throw new Error('A API de download não respondeu.');
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="info">
                     <p>${data.title || 'Download Pronto'}</p>
                 </div>
-                <div class="actions">
+                <div class="actions download-links">
                     <a href="${data.url}" target="_blank" download><button>Áudio</button></a>
                     ${data.picker ? data.picker.map(p => `<a href="${p.url}" target="_blank" download><button>${p.quality}</button></a>`).join('') : ''}
                 </div>
