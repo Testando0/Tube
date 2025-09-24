@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (API_BASE_URL === 'URL_DA_SUA_API_AQUI') {
+        if (API_BASE_URL === 'https://kuromi-system-tech.onrender.com') {
             showError('ERRO: A URL da API não foi configurada no arquivo script.js!');
             return;
         }
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // A rota da API para busca pode variar. Ex: '/search', '/query', etc.
-            const response = await fetch(`${API_BASE_URL}/search?query=${encodeURIComponent(query)}`);
+            const response = await fetch(`${API_BASE_URL}/api/pesquisayt?query='${encodeURIComponent(query)}`);
             if (!response.ok) {
                 throw new Error('A API não respondeu corretamente. Código: ' + response.status);
             }
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        if (API_BASE_URL === 'URL_DA_SUA_API_AQUI') {
+        if (API_BASE_URL === 'https://kuromi-system-tech.onrender.com') {
             showError('ERRO: A URL da API não foi configurada no arquivo script.js!');
             return;
         }
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // A rota da API para download por link pode variar. Ex: '/info', '/download'
-            const response = await fetch(`${API_BASE_URL}/info?url=${encodeURIComponent(link)}`);
+            const response = await fetch(`${API_BASE_URL}/api/play?name=${encodeURIComponent(link)}`);
             if (!response.ok) {
                 throw new Error('A API não respondeu corretamente. Código: ' + response.status);
             }
