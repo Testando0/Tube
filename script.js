@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Você precisa encontrar uma API pública e colocar a URL base aqui.
     // APIs para isso mudam constantemente. Procure por "youtube downloader api free" ou similar.
     // Exemplo de como a URL pode parecer: 'https://api.exemplo.com/v1/'
-    const API_BASE_URL = 'URL_DA_SUA_API_AQUI'; 
+    const API_BASE_URL = 'https://kuromi-system-tech.onrender.com'; 
     
     // Gerenciador das abas
     tabName.addEventListener('click', () => {
