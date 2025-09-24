@@ -1,5 +1,10 @@
+// --- APIs FUNCIONAIS (ATÉ A DATA ATUAL) ---
+// AVISO: Estas APIs são públicas e podem deixar de funcionar a qualquer momento.
+const API_SEARCH_URL = 'https://invidious.io.lol/api/v1/search'; // API para buscar vídeos por nome
+const API_DOWNLOAD_URL = 'https://co.wuk.sh/api/json';         // API para obter links de download a partir de uma URL
+
+// --- SELEÇÃO DE ELEMENTOS DO HTML ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Selecionando os elementos do HTML
     const tabName = document.getElementById('tab-name');
     const tabLink = document.getElementById('tab-link');
     const formName = document.getElementById('form-name');
@@ -10,13 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchLinkBtn = document.getElementById('search-link-btn');
     const resultsDiv = document.getElementById('results');
 
-    // !!! IMPORTANTE: URL DA API PÚBLICA !!!
-    // Você precisa encontrar uma API pública e colocar a URL base aqui.
-    // APIs para isso mudam constantemente. Procure por "youtube downloader api free" ou similar.
-    // Exemplo de como a URL pode parecer: 'https://api.exemplo.com/v1/'
-    const API_BASE_URL = 'https://kuromi-system-tech.onrender.com'; 
-    
-    // Gerenciador das abas
+    // --- LÓGICA DAS ABAS ---
     tabName.addEventListener('click', () => {
         tabName.classList.add('active');
         tabLink.classList.remove('active');
@@ -31,105 +30,144 @@ document.addEventListener('DOMContentLoaded', () => {
         formName.classList.remove('active');
     });
 
-    // Função para mostrar o spinner de carregamento
-    const showLoader = () => {
-        resultsDiv.innerHTML = '<div class="loader"></div>';
+    // --- FUNÇÕES AUXILIARES ---
+    const showLoader = (element = resultsDiv) => {
+        element.innerHTML = '<div class="loader"></div>';
     };
 
-    // Função para mostrar erros
-    const showError = (message) => {
-        resultsDiv.innerHTML = `<p style="color: #ff4d4d; text-align: center;">${message}</p>`;
+    const showError = (message, element = resultsDiv) => {
+        element.innerHTML = `<p style="color: #ff4d4d; text-align: center;">${message}</p>`;
     };
-    
-    // Função para buscar por NOME
+
+    // --- FUNÇÃO 1: BUSCAR VÍDEOS POR NOME ---
     const searchByName = async () => {
         const query = searchNameInput.value.trim();
         if (!query) {
             showError('Por favor, digite o nome de uma música ou vídeo.');
             return;
         }
-
-        if (API_BASE_URL === 'https://kuromi-system-tech.onrender.com') {
-            showError('ERRO: A URL da API não foi configurada no arquivo script.js!');
-            return;
-        }
-
         showLoader();
 
         try {
-            // A rota da API para busca pode variar. Ex: '/search', '/query', etc.
-            const response = await fetch(`${API_BASE_URL}/api/pesquisayt?query='${encodeURIComponent(query)}`);
-            if (!response.ok) {
-                throw new Error('A API não respondeu corretamente. Código: ' + response.status);
-            }
+            const response = await fetch(`${API_SEARCH_URL}?q=${encodeURIComponent(query)}&type=video`);
+            if (!response.ok) throw new Error('A API de busca não respondeu.');
+            
             const data = await response.json();
-            displayResults(data.resultado); // O formato da resposta (ex: data.results) depende da API
+            displaySearchResults(data);
         } catch (error) {
             console.error('Erro ao buscar:', error);
             showError('Não foi possível buscar os resultados. A API pode estar offline.');
         }
     };
-
-    // Função para baixar por LINK
-    const downloadByLink = async () => {
-        const link = searchLinkInput.value.trim();
-        if (!link) {
-            showError('Por favor, cole um link válido.');
-            return;
-        }
-        
-        if (API_BASE_URL === 'https://kuromi-system-tech.onrender.com') {
-            showError('ERRO: A URL da API não foi configurada no arquivo script.js!');
-            return;
-        }
-
-        showLoader();
-
-        try {
-            // A rota da API para download por link pode variar. Ex: '/info', '/download'
-            const response = await fetch(`${API_BASE_URL}/api/play?name=${encodeURIComponent(link)}`);
-            if (!response.ok) {
-                throw new Error('A API não respondeu corretamente. Código: ' + response.status);
-            }
-            const data = await response.json(); // A API deve retornar os links de download
-            displayDownloadLinks([data]); // Reutiliza a função de display
-        } catch (error) {
-            console.error('Erro ao buscar link:', error);
-            showError('Não foi possível obter as informações do link. A API pode não suportá-lo.');
-        }
-    };
-
-    // Função para mostrar os resultados na tela
-    const displayResults = (items) => {
+    
+    // --- FUNÇÃO 2: MOSTRAR RESULTADOS DA BUSCA ---
+    const displaySearchResults = (items) => {
         resultsDiv.innerHTML = '';
         if (!items || items.length === 0) {
-            resultsDiv.innerHTML = '<p style="text-align: center;">Nenhum resultado encontrado. 😕</p>';
+            showError('Nenhum resultado encontrado. 😕');
             return;
         }
 
-        items.forEach(item => {
-            // Os nomes das propriedades (thumbnail, title, mp3Url, etc) dependem da API!
+        items.slice(0, 10).forEach(item => { // Mostra os 10 primeiros resultados
             const resultHtml = `
-                <div class="result-item">
-                    <img src="${item.thumbnail || 'https://i.imgur.com/uG9T6lG.png'}" alt="Thumbnail">
+                <div class="result-item" id="item-${item.videoId}">
+                    <img src="${item.videoThumbnails[0]?.url || 'https://i.imgur.com/uG9T6lG.png'}" alt="Thumbnail">
                     <div class="info">
-                        <p>${item.title || 'Título indisponível'}</p>
+                        <p>${item.title}</p>
+                        <span>${item.author}</span>
                     </div>
                     <div class="actions">
-                        <a href="${item.mp3Url}" target="_blank" download><button>MP3</button></a>
-                        <a href="${item.mp4Url}" target="_blank" download><button>MP4</button></a>
+                        <button onclick="getDownloadLinks('${item.videoId}')">Baixar</button>
                     </div>
                 </div>
             `;
             resultsDiv.innerHTML += resultHtml;
         });
     };
+
+    // --- FUNÇÃO 3: OBTER LINKS DE DOWNLOAD PARA UM VÍDEO ESPECÍFICO ---
+    window.getDownloadLinks = async (videoId) => {
+        const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        const itemDiv = document.getElementById(`item-${videoId}`);
+        const actionsDiv = itemDiv.querySelector('.actions');
+        showLoader(actionsDiv);
+
+        try {
+            const response = await fetch(API_DOWNLOAD_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ url: videoUrl, isAudioOnly: true })
+            });
+            if (!response.ok) throw new Error('A API de download não respondeu.');
+            
+            const data = await response.json();
+            if (data.status === 'error') throw new Error(data.text);
+            
+            const downloadButtons = `
+                <div class="download-links">
+                    <a href="${data.url}" target="_blank" download><button>MP3</button></a>
+                    ${data.picker ? `<a href="${data.picker[0].url}" target="_blank" download><button>MP4</button></a>` : ''}
+                </div>
+            `;
+            actionsDiv.innerHTML = downloadButtons;
+
+        } catch (error) {
+            console.error('Erro ao obter links:', error);
+            showError('Falhou', actionsDiv);
+        }
+    };
     
-    // Adicionando os eventos aos botões
+    // --- FUNÇÃO 4: BAIXAR DIRETAMENTE POR LINK ---
+    const downloadByLink = async () => {
+        const link = searchLinkInput.value.trim();
+        if (!link) {
+            showError('Por favor, cole um link válido.');
+            return;
+        }
+        showLoader();
+
+        try {
+            const response = await fetch(API_DOWNLOAD_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ url: link, isAudioOnly: true })
+            });
+
+            if (!response.ok) throw new Error('A API de download não respondeu.');
+            
+            const data = await response.json();
+            if (data.status === 'error') throw new Error(data.text);
+            
+            displayDirectDownloadLinks(data);
+
+        } catch (error) {
+            console.error('Erro ao baixar por link:', error);
+            showError(`Erro: ${error.message}. O link pode ser inválido ou não suportado.`);
+        }
+    };
+    
+    // --- FUNÇÃO 5: MOSTRAR LINKS DE DOWNLOAD DIRETO ---
+    const displayDirectDownloadLinks = (data) => {
+        const resultHtml = `
+            <div class="result-item">
+                <img src="${data.thumbnail || 'https://i.imgur.com/uG9T6lG.png'}" alt="Thumbnail">
+                <div class="info">
+                    <p>${data.title || 'Download Pronto'}</p>
+                </div>
+                <div class="actions">
+                    <a href="${data.url}" target="_blank" download><button>Áudio</button></a>
+                    ${data.picker ? data.picker.map(p => `<a href="${p.url}" target="_blank" download><button>${p.quality}</button></a>`).join('') : ''}
+                </div>
+            </div>
+        `;
+        resultsDiv.innerHTML = resultHtml;
+    };
+
+
+    // --- EVENT LISTENERS PARA OS BOTÕES E TECLA ENTER ---
     searchNameBtn.addEventListener('click', searchByName);
     searchLinkBtn.addEventListener('click', downloadByLink);
     
-    // Permitir buscar com a tecla "Enter"
     searchNameInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') searchByName();
     });
